@@ -2,16 +2,16 @@ const { Contact } = require("../../models")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 const { contactSchema } = require("../../utils/validate/schemas")
 
-const updateContact = async (req, res) => {
+const updateContactStatus = async (req, res) => {
   const contact = req.body
   const { contactId } = req.params
+  const { error } = contactSchema.validate(contact)
 
-  if (error) {
+  if (error || contact.favorite === undefined) {
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
-      error: error.message,
-      message: "Missing fields or invalid data entered",
+      message: "Missing field 'favorite' or invalid data entered",
     })
   }
 
@@ -42,4 +42,4 @@ const updateContact = async (req, res) => {
   }
 }
 
-module.exports = updateContact
+module.exports = updateContactStatus

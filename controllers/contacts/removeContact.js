@@ -1,26 +1,33 @@
-const contacts = require("../../model/contacts.json")
+const { Contact } = require("../../models")
+const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const removeContact = async (req, res) => {
   const { contactId } = req.params
 
-  const contactIndex = contacts.findIndex((contact) => contact.id === Number(contactId))
-  if (!contactIndex === -1) {
-    return res.status(404).json({
+  if (!contactId) {
+    return res.status(STATUS_CODES.NOT_FOUND).json({
       status: "error",
-      code: 404,
-      message: "Not found",
+      code: STATUS_CODES.NOT_FOUND,
+      message: "Incorrect id. Not found",
     })
   }
 
-  const newContacts = contacts.filter((contact) => contact.id !== Number(contactId))
+  try {
+    const result = await Contact.findByIdAndDelete(contactId)
 
-  fs.writeFile(dbPath, JSON.stringify(newContacts))
-
-  res.status(200).json({
-    status: "success",
-    code: 200,
-    message: "Contact deleted",
-  })
+    res.status(STATUS_CODES.SUCCESS).json({
+      status: "success",
+      code: STATUS_CODES.SUCCESS,
+      message: "Contact deleted",
+      result,
+    })
+  } catch (error) {
+    res.status(STATUS_CODES.NOT_FOUND).json({
+      status: "error",
+      code: STATUS_CODES.NOT_FOUND,
+      message: error.message,
+    })
+  }
 }
 
 module.exports = removeContact
