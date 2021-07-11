@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose")
-const db = require("../db/connection")
+const db = require("../bin/server")
 
 const contactSchema = new Schema({
   name: {
