@@ -10,6 +10,8 @@ router.post("/", contacts.addContact)
 
 router.delete("/:contactId", contacts.removeContact)
 
-router.patch("/:contactId", contacts.updateContact)
+router.put("/:contactId", contacts.updateContact)
+
+router.patch("/:contactId/favorite", contacts.updateContactStatus)
 
 module.exports = router

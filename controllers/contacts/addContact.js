@@ -1,36 +1,39 @@
 const { v4 } = require("uuid")
-const contacts = require("../../model/contacts.json")
-const fs = require("fs/promises")
+const contacts = require("../../db/contacts.json")
 
-const path = require("path")
-const dbPath = path.join(__dirname + "/../../model/contacts.json")
+const { Contact } = require("../../models")
 
 const { contactSchema } = require("../../utils/validate/schemas")
+const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const addContact = async (req, res) => {
   const { error } = contactSchema.validate(req.body)
+
   if (error) {
-    return res.status(400).json({
+    return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
-      code: 400,
+      code: STATUS_CODES.BAD_REQUEST,
       message: "Missing required name field or invalid data entered",
     })
   }
-  const newContact = {
-    id: v4(),
-    ...req.body,
+
+  try {
+    const result = await Contact.create(req.body)
+
+    res.status(STATUS_CODES.CREATED).json({
+      status: "success",
+      code: STATUS_CODES.CREATED,
+      data: {
+        result,
+      },
+    })
+  } catch (error) {
+    res.status(STATUS_CODES.BAD_REQUEST).json({
+      status: "error",
+      code: STATUS_CODES.BAD_REQUEST,
+      message: error.message,
+    })
   }
-
-  const newContacts = contacts ? [...contacts, newContact] : newContact
-  fs.writeFile(dbPath, JSON.stringify(newContacts))
-
-  res.status(201).json({
-    status: "success",
-    code: 201,
-    data: {
-      result: newContact,
-    },
-  })
 }
 
 module.exports = addContact
