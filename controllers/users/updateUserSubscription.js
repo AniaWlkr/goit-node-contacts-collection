@@ -1,21 +1,22 @@
-const { contacts: service } = require("../../services")
+const { users: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
+const { userSchema } = require("../../utils/validate/schemas")
 
-const updateContactStatus = async (req, res) => {
-  const favorite = Boolean(req.body.favorite)
-  const { contactId } = req.params
+const updateUserSubscription = async (req, res) => {
   const userId = req.user.id
+  const { subscription } = req.body
 
-  if (favorite === undefined) {
+  const { error } = userSchema.validate({ subscription })
+  if (error) {
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
-      message: "Missing field 'favorite' or invalid data entered",
+      message: "Error from Joi or other validation library. Invalid data entered",
     })
   }
 
   try {
-    const result = await service.updateContact(userId, contactId, { favorite })
+    const result = await service.updateUserSubscription(userId, { subscription })
 
     if (!result) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -41,4 +42,4 @@ const updateContactStatus = async (req, res) => {
   }
 }
 
-module.exports = updateContactStatus
+module.exports = updateUserSubscription

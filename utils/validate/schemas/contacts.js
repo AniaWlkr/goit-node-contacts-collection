@@ -5,7 +5,7 @@ const contactSchema = Joi.object({
   email: Joi.string().email().required(),
   phone: Joi.string()
     .min(7)
-    .max(13)
+    .max(14)
     .pattern(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/)
     .required(),
   favorite: Joi.boolean(),

@@ -1,10 +1,6 @@
-const { v4 } = require("uuid")
-const contacts = require("../../db/contacts.json")
-
-const { Contact } = require("../../models")
-
 const { contactSchema } = require("../../utils/validate/schemas")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
+const { contacts: service } = require("../../services")
 
 const addContact = async (req, res) => {
   const { error } = contactSchema.validate(req.body)
@@ -18,7 +14,8 @@ const addContact = async (req, res) => {
   }
 
   try {
-    const result = await Contact.create(req.body)
+    const userId = req.user.id
+    const result = await service.addContact(req.body, userId)
 
     res.status(STATUS_CODES.CREATED).json({
       status: "success",
