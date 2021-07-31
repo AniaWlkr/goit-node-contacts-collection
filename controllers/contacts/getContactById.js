@@ -1,8 +1,9 @@
-const { Contact } = require("../../models")
+const { contacts: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params
+  const userId = req.user.id
 
   if (!contactId) {
     return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -13,7 +14,7 @@ const getContactById = async (req, res) => {
   }
 
   try {
-    const selectedContact = await Contact.findById(contactId)
+    const selectedContact = await service.getContactById(userId, contactId)
 
     res.status(STATUS_CODES.SUCCESS).json({
       status: "success",

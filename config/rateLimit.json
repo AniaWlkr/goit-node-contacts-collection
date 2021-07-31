@@ -1,0 +1,11 @@
+{
+  "apiLimitSet": {
+    "limiterTime": 900000,
+    "requestsLimit": 100
+  },
+  "clientMaxBodySize": "100mb",
+  "accountLimiterSet": {
+    "limiterTime": 3600000,
+    "requestsLimit": 2
+  }
+}

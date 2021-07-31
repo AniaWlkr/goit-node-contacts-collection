@@ -1,4 +1,4 @@
-const { Contact } = require("../../models")
+const { contacts: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const removeContact = async (req, res) => {
@@ -12,8 +12,9 @@ const removeContact = async (req, res) => {
     })
   }
 
+  const userId = req.user.id
   try {
-    const result = await Contact.findByIdAndDelete(contactId)
+    const result = await service.deleteContact(userId, contactId)
 
     res.status(STATUS_CODES.SUCCESS).json({
       status: "success",

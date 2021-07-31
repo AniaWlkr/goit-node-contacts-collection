@@ -1,17 +1,13 @@
 const express = require("express")
 const router = express.Router()
 const { contacts } = require("../../controllers")
+const { checkToken } = require("../../middleware")
 
-router.get("/", contacts.listContacts)
-
-router.get("/:contactId", contacts.getContactById)
-
-router.post("/", contacts.addContact)
-
-router.delete("/:contactId", contacts.removeContact)
-
-router.put("/:contactId", contacts.updateContact)
-
-router.patch("/:contactId/favorite", contacts.updateContactStatus)
+router.get("/", checkToken, contacts.listContacts)
+router.post("/", checkToken, contacts.addContact)
+router.get("/:contactId", checkToken, contacts.getContactById)
+router.delete("/:contactId", checkToken, contacts.removeContact)
+router.put("/:contactId", checkToken, contacts.updateContact)
+router.patch("/:contactId/favorite", checkToken, contacts.updateContactStatus)
 
 module.exports = router
