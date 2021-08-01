@@ -24,9 +24,15 @@ const findUserByFilter = (filter) => {
   return User.findOne(filter).exec()
 }
 
+const updateAvatar = (id, avatarPath) => {
+  return User.findByIdAndUpdate(id, { avatarURL: avatarPath })
+}
+
 module.exports = {
   addUser,
   updateUserToken,
+  updateUserSubscription,
   findUserById,
   findUserByFilter,
+  updateAvatar,
 }

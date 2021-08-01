@@ -1,7 +1,8 @@
 const contactSchema = require("./contacts")
-const userSchema = require('./users');
+const { userSchema, subscriptionSchema } = require("./users")
 
 module.exports = {
   contactSchema,
-  userSchema
+  userSchema,
+  subscriptionSchema,
 }

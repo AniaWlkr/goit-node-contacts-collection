@@ -2,6 +2,7 @@ const express = require("express")
 const logger = require("morgan")
 const cors = require("cors")
 const helmet = require("helmet")
+const path = require("path")
 const { rateLimit } = require("./middleware")
 const { clientMaxBodySize } = require("./config/rateLimit.json")
 
@@ -20,6 +21,8 @@ app.use(rateLimit.limiter)
 app.use("/api/contacts", api.contacts)
 app.use("/api/auth", api.auth)
 app.use("/api/users", api.users)
+
+app.use(express.static(path.join(__dirname, "public")))
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" })

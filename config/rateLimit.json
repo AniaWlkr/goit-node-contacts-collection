@@ -6,6 +6,6 @@
   "clientMaxBodySize": "100mb",
   "accountLimiterSet": {
     "limiterTime": 3600000,
-    "requestsLimit": 2
+    "requestsLimit": 1000
   }
 }
