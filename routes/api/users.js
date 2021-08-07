@@ -5,6 +5,7 @@ const { checkToken, multerUpload } = require("../../middleware")
 
 router.get("/current", checkToken, users.getCurrentUser)
 router.patch("/", checkToken, users.updateUserSubscription)
+router.get("/:userId", checkToken, users.findUserById)
 router.patch("/avatar", checkToken, multerUpload.single("avatar"), users.updateAvatar)
 
 module.exports = router

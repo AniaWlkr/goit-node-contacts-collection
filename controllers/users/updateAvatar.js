@@ -1,6 +1,6 @@
 const { users: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
-const avatarResizeRename = require("../../utils/avatarResizeRename")
+const { avatarResizeRename, avatarDelete } = require("../../utils/avatarResizeRename")
 
 const updateAvatar = async (req, res) => {
   if (!req.file) {
@@ -14,8 +14,15 @@ const updateAvatar = async (req, res) => {
   const userId = req.user.id
 
   try {
-    avatarURL = await avatarResizeRename(req.file)
-    const result = await service.updateAvatar(userId, avatarURL)
+    avatar = await avatarResizeRename(req.file)
+    const oldAvatar = await service.getAvatar(userId)
+
+    if (oldAvatar.avatarCloudId) {
+      await avatarDelete(oldAvatar.avatarCloudId)
+    }
+
+    const { secure_url, public_id } = avatar
+    const result = await service.updateAvatar(userId, secure_url, public_id)
 
     if (!result) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -30,7 +37,8 @@ const updateAvatar = async (req, res) => {
       code: STATUS_CODES.SUCCESS,
       data: {
         userId,
-        avatarURL,
+        avatarURL: secure_url,
+        avatarCloudId: public_id,
       },
     })
   } catch (error) {

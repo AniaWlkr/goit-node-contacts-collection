@@ -31,6 +31,10 @@ const userSchema = new Schema({
       return gravatar.url(this.email)
     },
   },
+  avatarCloudId: {
+    type: String,
+    default: null,
+  },
 })
 
 userSchema.methods.setPassword = function (password) {
