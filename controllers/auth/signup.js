@@ -1,6 +1,7 @@
 const { userSchema } = require("../../utils/validate/schemas")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 const { users: service } = require("../../services")
+const avatarResizeRename = require("../../utils/avatarResizeRename")
 
 const register = async (req, res) => {
   const { error } = userSchema.validate(req.body)
@@ -11,6 +12,10 @@ const register = async (req, res) => {
       code: STATUS_CODES.BAD_REQUEST,
       message: "Missing required name field or invalid data entered",
     })
+  }
+
+  if (req.file) {
+    req.body.avatarURL = await avatarResizeRename(req.file)
   }
 
   const { email, subscription = "starter" } = req.body

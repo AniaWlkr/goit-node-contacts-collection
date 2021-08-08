@@ -1,23 +1,28 @@
 const { users: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
-const { subscriptionSchema } = require("../../utils/validate/schemas")
+const { avatarResizeRename, avatarDelete } = require("../../utils/avatarResizeRename")
 
-const updateUserSubscription = async (req, res) => {
-  const userId = req.user.id
-  const { subscription } = req.body
-
-  const { error } = subscriptionSchema.validate(req.body)
-
-  if (error) {
+const updateAvatar = async (req, res) => {
+  if (!req.file) {
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
-      message: "Error from Joi or other validation library. Invalid data entered",
+      message: "Invalid file format or no file uploaded",
     })
   }
 
+  const userId = req.user.id
+
   try {
-    const result = await service.updateUserSubscription(userId, subscription)
+    avatar = await avatarResizeRename(req.file)
+    const oldAvatar = await service.getAvatar(userId)
+
+    if (oldAvatar.avatarCloudId) {
+      await avatarDelete(oldAvatar.avatarCloudId)
+    }
+
+    const { secure_url, public_id } = avatar
+    const result = await service.updateAvatar(userId, secure_url, public_id)
 
     if (!result) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -32,7 +37,8 @@ const updateUserSubscription = async (req, res) => {
       code: STATUS_CODES.SUCCESS,
       data: {
         userId,
-        subscription,
+        avatarURL: secure_url,
+        avatarCloudId: public_id,
       },
     })
   } catch (error) {
@@ -44,4 +50,4 @@ const updateUserSubscription = async (req, res) => {
   }
 }
 
-module.exports = updateUserSubscription
+module.exports = updateAvatar

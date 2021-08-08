@@ -1,4 +1,3 @@
-const { users: service } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const getCurrentUser = async (req, res) => {
