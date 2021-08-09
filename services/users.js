@@ -1,6 +1,10 @@
 const { User } = require("../models")
+const { findByIdAndUpdate } = require("../models/user.model")
 
 const addUser = (userData) => {
+  try {
+  } catch (error) {}
+
   const user = new User(userData)
   const { password } = userData
 
@@ -33,6 +37,17 @@ const getAvatar = async (id) => {
   return { avatarURL, avatarCloudId }
 }
 
+const verifyUserByEmail = async ({ verifyToken }) => {
+  const user = await findUserByFilter({ verifyToken })
+
+  if (user) {
+    await User.findByIdAndUpdate(user.id, { isVerified: true, verifyToken: null })
+    return true
+  }
+
+  return false
+}
+
 module.exports = {
   addUser,
   updateUserToken,
@@ -41,4 +56,5 @@ module.exports = {
   findUserByFilter,
   updateAvatar,
   getAvatar,
+  verifyUserByEmail,
 }

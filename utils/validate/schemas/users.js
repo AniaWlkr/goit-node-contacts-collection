@@ -5,7 +5,10 @@ const userSchema = Joi.object({
   email: Joi.string().email().required(),
   subscription: Joi.string().allow("starter", "pro", "business").only(),
   token: Joi.string(),
-  avatar: Joi.string(),
+  avatarURL: Joi.string(),
+  avatarCloudId: Joi.string(),
+  isVerified: Joi.boolean(),
+  verifyToken: Joi.string(),
 })
 
 const subscriptionSchema = Joi.object({

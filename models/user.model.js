@@ -3,39 +3,50 @@ const bcrypt = require("bcryptjs")
 const SALT_FACTOR = 6
 const gravatar = require("gravatar")
 
-const userSchema = new Schema({
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-  },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-  },
-  subscription: {
-    type: String,
-    enum: {
-      values: ["starter", "pro", "business"],
-      message: "This type of subscription doesn't exist",
+const userSchema = new Schema(
+  {
+    password: {
+      type: String,
+      required: [true, "Password is required"],
     },
-    default: "starter",
-  },
-  token: {
-    type: String,
-    default: null,
-  },
-  avatarURL: {
-    type: String,
-    default: function () {
-      return gravatar.url(this.email)
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+    },
+    subscription: {
+      type: String,
+      enum: {
+        values: ["starter", "pro", "business"],
+        message: "This type of subscription doesn't exist",
+      },
+      default: "starter",
+    },
+    token: {
+      type: String,
+      default: null,
+    },
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email)
+      },
+    },
+    avatarCloudId: {
+      type: String,
+      default: null,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verifyToken: {
+      type: String,
+      required: [true, "Verify token is required"],
     },
   },
-  avatarCloudId: {
-    type: String,
-    default: null,
-  },
-})
+  { versionKey: false, timestamps: true }
+)
 
 userSchema.methods.setPassword = function (password) {
   this.password = bcrypt.hashSync(password, bcrypt.genSaltSync(SALT_FACTOR))
