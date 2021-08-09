@@ -1,23 +1,35 @@
-const { users: service } = require("../../services")
+const { users: service, email: mailService } = require("../../services")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
 
 const verifyEmail = async (req, res) => {
-  try {
-    const user = await service.verifyUserByEmail(req.params)
+  const { email } = req.body
 
-    if (!user) {
-      return res.status(STATUS_CODES.NOT_FOUND).json({
+  if (!email) {
+    return res.status(STATUS_CODES.BAD_REQUEST).json({
+      status: "error",
+      code: STATUS_CODES.BAD_REQUEST,
+      message: "Missing required field email",
+    })
+  }
+
+  try {
+    const user = await service.findUserByFilter({ email })
+
+    if (user.isVerified) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: "error",
-        code: STATUS_CODES.NOT_FOUND,
-        message: "Varification token is invalid. Contact admin",
+        code: STATUS_CODES.BAD_REQUEST,
+        message: "Verification has already been passed",
       })
     }
+
+    await mailService.sendEmail(user.verifyToken, email)
 
     res.status(STATUS_CODES.SUCCESS).json({
       status: "success",
       code: STATUS_CODES.SUCCESS,
       data: {
-        message: "Verification completed successfully",
+        message: "Verification email sent",
       },
     })
   } catch (error) {

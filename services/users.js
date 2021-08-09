@@ -1,5 +1,4 @@
 const { User } = require("../models")
-const { findByIdAndUpdate } = require("../models/user.model")
 
 const addUser = (userData) => {
   try {
