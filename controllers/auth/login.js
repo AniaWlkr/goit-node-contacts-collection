@@ -15,16 +15,17 @@ const login = async (req, res, next) => {
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
       message: "Error from Joi or other validation library. Invalid data entered",
+      // message: error.message,
     })
   }
 
   try {
     const user = await service.findUserByFilter({ email })
 
-    if (!user || !user.comparePassword(password)) {
-      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+    if (!user || !user.comparePassword(password) || !user.isVerified) {
+      return res.status(STATUS_CODES.ANAUTHORIZED).json({
         status: "error",
-        code: STATUS_CODES.UNAUTHORIZED,
+        code: STATUS_CODES.ANAUTHORIZED,
         message: "Email or password is wrong",
       })
     }

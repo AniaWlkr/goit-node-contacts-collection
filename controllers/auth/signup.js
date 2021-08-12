@@ -1,24 +1,39 @@
-const { userSchema } = require("../../utils/validate/schemas")
+const { nanoid } = require("nanoid")
 const STATUS_CODES = require("../../utils/httpStatusCodes")
-const { users: service } = require("../../services")
-const avatarResizeRename = require("../../utils/avatarResizeRename")
+const { userSchema } = require("../../utils/validate/schemas")
+const { users: service, email: mailService } = require("../../services")
+const { avatarResizeRename } = require("../../utils/avatarResizeRename")
 
 const register = async (req, res) => {
+  if (req.file) {
+    const { secure_url: avatarURL, public_id: avatarCloudId } = await avatarResizeRename(req.file)
+    req.body = { ...req.body, avatarURL, avatarCloudId }
+  }
+
+  const verifyToken = nanoid()
+  req.body = { ...req.body, verifyToken }
+  const { email, subscription = "starter" } = req.body
+
   const { error } = userSchema.validate(req.body)
 
   if (error) {
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
-      message: "Missing required name field or invalid data entered",
+      // message: "Missing required name field or invalid data entered",
+      message: error.message,
     })
   }
 
-  if (req.file) {
-    req.body.avatarURL = await avatarResizeRename(req.file)
+  try {
+    await mailService.sendEmail(verifyToken, email)
+  } catch (error) {
+    return res.status(STATUS_CODES.SERVICE_UNAVAILABLE).json({
+      status: "error",
+      code: STATUS_CODES.SERVICE_UNAVAILABLE,
+      message: error.message,
+    })
   }
-
-  const { email, subscription = "starter" } = req.body
 
   try {
     const result = await service.findUserByFilter({ email })
