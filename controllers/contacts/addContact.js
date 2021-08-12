@@ -17,7 +17,7 @@ const addContact = async (req, res) => {
     const userId = req.user.id
     const result = await service.addContact(req.body, userId)
 
-    res.status(STATUS_CODES.CREATED).json({
+    return res.status(STATUS_CODES.CREATED).json({
       status: "success",
       code: STATUS_CODES.CREATED,
       data: {
@@ -25,7 +25,7 @@ const addContact = async (req, res) => {
       },
     })
   } catch (error) {
-    res.status(STATUS_CODES.BAD_REQUEST).json({
+    return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
       message: error.message,

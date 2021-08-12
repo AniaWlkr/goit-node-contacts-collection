@@ -16,7 +16,7 @@ const getContactById = async (req, res) => {
   try {
     const selectedContact = await service.getContactById(userId, contactId)
 
-    res.status(STATUS_CODES.SUCCESS).json({
+    return res.status(STATUS_CODES.SUCCESS).json({
       status: "success",
       code: STATUS_CODES.SUCCESS,
       data: {
@@ -24,7 +24,7 @@ const getContactById = async (req, res) => {
       },
     })
   } catch (error) {
-    res.status(STATUS_CODES.NOT_FOUND).json({
+    return res.status(STATUS_CODES.NOT_FOUND).json({
       status: "error",
       code: STATUS_CODES.NOT_FOUND,
       message: error.message,

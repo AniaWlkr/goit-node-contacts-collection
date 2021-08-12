@@ -25,7 +25,7 @@ const updateContactStatus = async (req, res) => {
       })
     }
 
-    res.status(STATUS_CODES.SUCCESS).json({
+    return res.status(STATUS_CODES.SUCCESS).json({
       status: "success",
       code: STATUS_CODES.SUCCESS,
       data: {
@@ -33,7 +33,7 @@ const updateContactStatus = async (req, res) => {
       },
     })
   } catch (error) {
-    res.status(STATUS_CODES.BAD_REQUEST).json({
+    return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: "error",
       code: STATUS_CODES.BAD_REQUEST,
       message: error.message,

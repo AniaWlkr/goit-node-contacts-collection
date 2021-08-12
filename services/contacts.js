@@ -1,6 +1,7 @@
 const { Contact } = require("../models")
 
 const addContact = (newContact, userId) => {
+  
   return Contact.create({ ...newContact, owner: userId })
 }
 

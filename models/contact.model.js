@@ -1,4 +1,3 @@
-const mongoose = require("mongoose")
 const mongoosePaginate = require("mongoose-paginate-v2")
 const { Schema, model } = require("mongoose")
 const db = require("../bin/server")
